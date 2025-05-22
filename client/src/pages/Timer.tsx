@@ -24,6 +24,7 @@ export default function Timer() {
     playlists,
     selectedPlaylist,
     setSelectedPlaylist,
+    playTrackFromPlaylist,
   } = useSpotify();
   
   const {
@@ -47,6 +48,15 @@ export default function Timer() {
       if (playNotification) {
         setShowBreakNotification(true);
         setTimeout(() => setShowBreakNotification(false), 5000);
+      }
+      
+      // Automatically play music from selected playlist during break
+      if (isSpotifyConnected && selectedPlaylist) {
+        playTrackFromPlaylist();
+        toast({
+          title: "Break Time!",
+          description: `Playing music from "${selectedPlaylist.name}" playlist`
+        });
       }
     },
     onBreakComplete: () => {
@@ -97,6 +107,10 @@ export default function Timer() {
       const playlist = playlists.find(p => p.id === settings.selectedPlaylistId);
       if (playlist) {
         setSelectedPlaylist(playlist);
+        toast({
+          title: "Playlist Selected",
+          description: `"${playlist.name}" will play during your breaks`
+        });
       }
     }
     

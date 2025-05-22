@@ -42,6 +42,7 @@ export function useTimer({
           if (isStudyMode) {
             // Switch to break mode
             setIsStudyMode(false);
+            // Trigger study complete callback to play music
             onStudyComplete?.();
             return breakDuration;
           } else {
