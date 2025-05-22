@@ -22,6 +22,7 @@ const mockTrack = {
 export function setupSpotifyRoutes(app: Express) {
   // Check if user is connected to Spotify
   app.get("/api/spotify/status", (req, res) => {
+    // @ts-ignore - session property exists but TypeScript doesn't recognize it
     const isConnected = req.session.spotifyToken !== undefined;
     res.json({ connected: isConnected });
   });

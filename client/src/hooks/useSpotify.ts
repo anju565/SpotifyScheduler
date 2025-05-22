@@ -10,16 +10,19 @@ export function useSpotify() {
   const [selectedPlaylist, setSelectedPlaylist] = useState<SpotifyPlaylist | undefined>(undefined);
 
   // Check if user is connected to Spotify
-  const { data: connectionStatus } = useQuery({
+  const { data: connectionStatus, refetch: refetchConnectionStatus } = useQuery({
     queryKey: ['/api/spotify/status'],
     retry: false,
-    onSuccess: (data) => {
-      setIsConnected(data.connected);
-    },
-    onError: () => {
-      setIsConnected(false);
-    },
+    refetchInterval: 3000, // Check connection status every 3 seconds
+    refetchOnWindowFocus: true,
   });
+  
+  // Update connection status when data changes
+  useEffect(() => {
+    if (connectionStatus) {
+      setIsConnected(connectionStatus.connected);
+    }
+  }, [connectionStatus]);
 
   // Get user's playlists if connected
   const { data: playlistsData } = useQuery({

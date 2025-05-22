@@ -57,10 +57,16 @@ export default function Timer() {
     }
   });
 
-  // Check if Spotify is connected on mount
+  // Check if Spotify is connected on mount, close modal if connected
   useEffect(() => {
     if (!isSpotifyConnected) {
       setShowAuthModal(true);
+    } else {
+      setShowAuthModal(false);
+      toast({
+        title: "Spotify Connected",
+        description: "Your Spotify account is now connected to StudyBeats"
+      });
     }
   }, [isSpotifyConnected]);
 
