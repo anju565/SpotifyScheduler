@@ -75,21 +75,31 @@ export default function SettingsModal({
             </div>
           </div>
           
-          {isSpotifyConnected && playlists.length > 0 && (
+          {isSpotifyConnected && (
             <div className="mb-4">
-              <Label className="block text-sm font-medium text-neutral-dark mb-1">Select Playlist</Label>
-              <Select value={newSelectedPlaylistId} onValueChange={setNewSelectedPlaylistId}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a playlist" />
-                </SelectTrigger>
-                <SelectContent>
-                  {playlists.map((playlist) => (
-                    <SelectItem key={playlist.id} value={playlist.id}>
-                      {playlist.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label className="block text-sm font-medium text-neutral-dark mb-1">Select Playlist for Breaks</Label>
+              {playlists.length > 0 ? (
+                <>
+                  <Select value={newSelectedPlaylistId} onValueChange={setNewSelectedPlaylistId}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a playlist" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {playlists.map((playlist) => (
+                        <SelectItem key={playlist.id} value={playlist.id}>
+                          {playlist.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-neutral-dark mt-1">Music from this playlist will play during breaks</p>
+                </>
+              ) : (
+                <div className="bg-neutral-light rounded p-3 flex items-center">
+                  <span className="material-icons text-status-warning mr-2">info</span>
+                  <span className="text-sm">Loading your playlists...</span>
+                </div>
+              )}
             </div>
           )}
           

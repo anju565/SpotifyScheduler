@@ -77,6 +77,8 @@ export default function Timer() {
         title: "Spotify Connected",
         description: "Your Spotify account is now connected to StudyBeats"
       });
+      // Open settings immediately to select a playlist
+      setShowSettingsModal(true);
     }
   }, [isSpotifyConnected]);
 

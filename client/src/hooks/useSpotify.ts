@@ -45,18 +45,31 @@ export function useSpotify() {
   // Play a track from the selected playlist
   const { mutate: playTrackMutate } = useMutation({
     mutationFn: async () => {
-      if (!selectedPlaylist) return null;
+      // Use first playlist as default if none selected
+      const playlistToUse = selectedPlaylist || (playlistsData?.playlists && playlistsData.playlists.length > 0 
+        ? playlistsData.playlists[0] 
+        : null);
+      
+      if (!playlistToUse) return null;
+      
+      console.log("Playing track from playlist:", playlistToUse.name);
       
       const response = await apiRequest(
         "POST", 
         "/api/spotify/play", 
-        { playlistId: selectedPlaylist.id }
+        { playlistId: playlistToUse.id }
       );
       return response.json();
     },
     onSuccess: (data) => {
       if (data) {
+        console.log("Track data received:", data);
         setCurrentTrack(data.track);
+        
+        // If this was default playlist selection, update the state
+        if (!selectedPlaylist && data.playlist) {
+          setSelectedPlaylist(data.playlist);
+        }
       }
     },
   });
