@@ -264,8 +264,49 @@ export function setupSpotifyRoutes(app: Express) {
       }
       
       // 3. Start playback on the user's device
-      // In a real-world implementation, we would call the Spotify API to start playback
-      // on the user's active device, but we'll skip that here
+      let deviceName = "unknown";
+      
+      // First, get available devices
+      const devicesResponse = await fetch('https://api.spotify.com/v1/me/player/devices', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      
+      if (devicesResponse.ok) {
+        const devicesData = await devicesResponse.json();
+        console.log('Available devices:', devicesData.devices);
+        
+        // If we have any active devices, start playback
+        if (devicesData.devices && devicesData.devices.length > 0) {
+          // Find an active device, or use the first one
+          const device = devicesData.devices.find((d: any) => d.is_active) || devicesData.devices[0];
+          deviceName = device.name;
+          
+          // Start playback on the device
+          const playResponse = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device.id}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              context_uri: `spotify:playlist:${playlistId}`,
+              offset: {
+                position: randomIndex
+              }
+            })
+          });
+          
+          if (playResponse.ok) {
+            console.log(`Started playback on device: ${device.name}`);
+          } else {
+            console.error('Failed to start playback:', await playResponse.text());
+          }
+        } else {
+          console.log('No active Spotify devices found. Open Spotify on any device first.');
+        }
+      }
       
       // Create track object from Spotify data
       const track = {
@@ -279,7 +320,8 @@ export function setupSpotifyRoutes(app: Express) {
       res.json({ 
         success: true, 
         track: track,
-        playlist: playlistObject
+        playlist: playlistObject,
+        device: deviceName
       });
     } catch (error) {
       console.error("Error playing track:", error);
