@@ -50,13 +50,22 @@ export default function Timer() {
         setTimeout(() => setShowBreakNotification(false), 5000);
       }
       
-      // Automatically play music from selected playlist during break
-      if (isSpotifyConnected && selectedPlaylist) {
-        playTrackFromPlaylist();
-        toast({
-          title: "Break Time!",
-          description: `Playing music from "${selectedPlaylist.name}" playlist`
-        });
+      // Show selected playlist during break
+      if (isSpotifyConnected) {
+        if (selectedPlaylist) {
+          playTrackFromPlaylist();
+          toast({
+            title: "Break Time!",
+            description: `Ready to play music from "${selectedPlaylist.name}" playlist`
+          });
+        } else {
+          // If no playlist is selected, open settings to choose one
+          setShowSettingsModal(true);
+          toast({
+            title: "Select a Playlist",
+            description: "Choose a playlist to listen to during your break"
+          });
+        }
       }
     },
     onBreakComplete: () => {
