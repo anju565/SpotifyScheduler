@@ -1,11 +1,11 @@
+import { useEffect } from 'react';
 import { SpotifyTrack, SpotifyPlaylist } from "@shared/schema";
+import { Button } from '@/components/ui/button';
 
 interface SpotifyPlayerProps {
   currentTrack?: SpotifyTrack;
   currentPlaylist?: SpotifyPlaylist;
 }
-
-import { Button } from '@/components/ui/button';
 
 export default function SpotifyPlayer({ currentTrack, currentPlaylist }: SpotifyPlayerProps) {
   if (!currentTrack && !currentPlaylist) {
@@ -14,13 +14,20 @@ export default function SpotifyPlayer({ currentTrack, currentPlaylist }: Spotify
   
   const openInSpotify = () => {
     if (currentPlaylist) {
-      // Open the playlist in Spotify
-      window.open(`https://open.spotify.com/playlist/${currentPlaylist.id}`, '_blank');
+      // Open the playlist in Spotify and auto-play (using URI scheme which will open the app)
+      window.open(`spotify:playlist:${currentPlaylist.id}`, '_blank');
     } else if (currentTrack) {
-      // Open the track in Spotify
-      window.open(`https://open.spotify.com/track/${currentTrack.id}`, '_blank');
+      // Open the track directly in Spotify app
+      window.open(`spotify:track:${currentTrack.id}`, '_blank');
     }
   };
+  
+  // Auto-open Spotify when component mounts during break
+  useEffect(() => {
+    if (currentPlaylist) {
+      openInSpotify();
+    }
+  }, [currentPlaylist?.id]);
   
   return (
     <div className="w-full max-w-md bg-white rounded-lg shadow-md p-4 mb-6">

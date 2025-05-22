@@ -31,19 +31,51 @@ export function useTimer({
     };
   }, []);
   
+  // Store session data for reporting
+  const recordSession = (type: 'study' | 'break', duration: number, completed: boolean) => {
+    try {
+      const sessionData = JSON.parse(localStorage.getItem('studySessionsData') || '[]');
+      const currentSession = {
+        id: Date.now(),
+        type: type,
+        date: new Date().toISOString(),
+        duration: duration,
+        completed: completed
+      };
+      sessionData.push(currentSession);
+      localStorage.setItem('studySessionsData', JSON.stringify(sessionData));
+    } catch (e) {
+      console.error('Failed to save session data', e);
+    }
+  };
+
   // Handle timer logic
   useEffect(() => {
     if (!isRunning) return;
     
+    // Record session start if starting new
+    if (timerRef.current === null) {
+      recordSession(isStudyMode ? 'study' : 'break', 
+                   isStudyMode ? studyDuration : breakDuration, 
+                   false);
+    }
+    
     timerRef.current = window.setInterval(() => {
       setCurrentSeconds((prev) => {
         if (prev <= 1) {
-          // Timer complete
+          // Timer complete - record completed session
+          recordSession(
+            isStudyMode ? 'study' : 'break',
+            isStudyMode ? studyDuration - 1 : breakDuration - 1,
+            true
+          );
+          
           if (isStudyMode) {
-            // Switch to break mode
+            // Switch to break mode automatically
             setIsStudyMode(false);
             // Trigger study complete callback to play music
             onStudyComplete?.();
+            // Auto-start the break timer
             return breakDuration;
           } else {
             // Switch back to study mode
