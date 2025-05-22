@@ -29,9 +29,7 @@ export function setupSpotifyRoutes(app: Express) {
   // Get Spotify auth URL
   app.get("/api/spotify/auth-url", (req, res) => {
     const clientId = process.env.SPOTIFY_CLIENT_ID || "your-client-id";
-    const redirectUri = process.env.REPLIT_DOMAINS 
-      ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}/api/spotify/callback` 
-      : "http://localhost:5000/api/spotify/callback";
+    const redirectUri = "https://616094e5-a009-4a5c-9a02-a0429459d8b7-00-3pxhss9dzxwxs.janeway.replit.dev/api/spotify/callback";
     
     const scopes = [
       "user-read-private",
@@ -64,9 +62,7 @@ export function setupSpotifyRoutes(app: Express) {
     try {
       const clientId = process.env.SPOTIFY_CLIENT_ID || "your-client-id";
       const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || "your-client-secret";
-      const redirectUri = process.env.REPLIT_DOMAINS 
-        ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}/api/spotify/callback` 
-        : "http://localhost:5000/api/spotify/callback";
+      const redirectUri = "https://616094e5-a009-4a5c-9a02-a0429459d8b7-00-3pxhss9dzxwxs.janeway.replit.dev/api/spotify/callback";
       
       // Exchange code for access token
       const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
